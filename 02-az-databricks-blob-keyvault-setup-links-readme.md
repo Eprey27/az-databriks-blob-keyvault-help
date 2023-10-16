@@ -7,7 +7,7 @@ This guide outlines the steps to install the Databricks CLI locally and then con
 0. [Prerequisites](#prerequisites)
 1. [Installing the Databricks CLI](#1-installing-the-databricks-cli)
 2. [Configuring the Databricks CLI](#2-configuring-the-databricks-cli)
-3. [Creating and Configuring Azure Storage Account](#3-creating-and-configuring-azure-storage-account)
+3. [Creating and Configuring Azure Storage Account for Databricks integration](#3-creating-and-configuring-azure-storage-account-for-databricks-integration)
 4. [Setting up Azure Key Vault](#4-setting-up-azure-key-vault)
 5. [Linking Databricks with Azure Key Vault](#5-linking-databricks-with-azure-key-vault)
 6. [Accessing Azure Blob Storage from a Databricks Notebook](#6-accessing-azure-blob-storage-from-a-databricks-notebook)
@@ -38,7 +38,7 @@ Follow the subsequent prompts.
 
 [>> Check here for more detail](#2-configuring-the-databricks-cli-for-azure-integration)
 
-## **3. Creating and Configuring Azure Storage Account**:
+## **3. Creating and Configuring Azure Storage Account for Databriks integration**:
 - Sign in to the [Azure portal](https://portal.azure.com/).
 - Create a new storage account if you don't already have one. If unfamiliar, use [this guide](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create).
 - Within that storage account, navigate to the Blob service section and create a new container.
@@ -206,66 +206,13 @@ The successful configuration of the Databricks CLI is crucial as it:
 ---
 ---
 
-## **3. Creating and Configuring Azure Storage Account**:
+## **3. Creating and Configuring Azure Storage Account for Databricks Integration**:
 
 ### **3.1. Purpose**:
 
-Azure Storage Account serves as a unified object store, where data objects, like files and images, can be stored in Blobs. When integrating Azure Databricks with Blob Storage, it's essential to ensure the storage account is correctly set up and secured. This becomes even more crucial when secrets like access keys are managed through Azure Key Vault.
-
-### **3.2. Step-by-step Guide**:
-
-1. **Logging into Azure Portal**:
-   - Open your preferred web browser.
-   - Navigate to the [Azure portal](https://portal.azure.com/).
-   - Sign in with your Azure account credentials.
-
-2. **Initiate the Creation of a Storage Account**:
-   - On the Azure portal's home page, click on "+ Create a resource."
-   - Search for "Storage Account" in the marketplace search bar.
-   - From the dropdown results, select "Storage Account" and click on the "Create" button.
-
-3. **Configure Basics**:
-   - **Subscription**: Select the Azure subscription where you want to create the storage account.
-   - **Resource Group**: You can either create a new resource group or select an existing one. A resource group is a container that holds related Azure resources.
-   - **Storage Account Name**: Provide a unique name for your storage account. This name is globally unique and will be part of your blob's URL.
-   - **Location**: Select the geographical region that's closest to your users or other Azure services you're using.
-   - **Performance**: Select "Standard" unless you have specific needs for premium storage.
-   - **Redundancy**: Choose the type of replication you want to use. "Locally redundant storage (LRS)" is a cost-effective choice for protecting your data from local hardware failures.
-
-4. **Advanced Settings (Optional)**:
-   - **Security**: Toggle "Secure transfer required" to "Enabled" to ensure data is encrypted during transit.
-   - **Data Protection**: Decide if you want to enable Point-in-time restore, Soft delete, or Azure AD-based authentication.
-   - Adjust other settings as needed based on your project requirements.
-
-5. **Review & Create**:
-   - After configuring the storage account settings, review them to ensure everything is correct.
-   - Click on the "Review + Create" button. Azure will validate your configuration.
-   - Once validation passes, click on the "Create" button.
-
-6. **Post-Creation Tasks**:
-   - Navigate to the newly created storage account from the Azure portal dashboard.
-   - Go to the "Blob service" section in the left-hand sidebar.
-   - Click on "+ Container" to create a new container. Assign a name and set the desired access level (typically "Private").
-   - For the purpose of the Databricks integration, you need to access the "Access keys" under the "Settings" section. Here, you'll find two sets of keys: `key1` and `key2`. Make a note of one of the connection strings, which you'll later store in Azure Key Vault for secure access.
-
-### **3.3. Best Practices & Tips**:
-
-- **Never Share Access Keys Publicly**: While it's essential to retrieve your access keys for integration purposes, never expose them in public forums, code repositories, or insecure locations.
-  
-- **Monitor Usage & Costs**: Azure Storage costs can escalate if you're storing large amounts of data or if there's significant data egress. Monitor and set up alerts for any unexpected usage spikes.
-  
-- **Leverage Azure Security & Compliance Tools**: Ensure that you periodically review Azure's recommendations on security and compliance to keep your storage secure and compliant.
-
----
----
-
-## **4. Creating and Configuring Azure Storage Account for Databricks Integration**:
-
-### **4.1. Purpose**:
-
 Azure Blob Storage is a service for storing large amounts of unstructured data, such as text or binary data. For the purposes of this integration, Azure Blob Storage will act as the data source or destination for your Azure Databricks operations.
 
-### **4.2. Configuration Steps**:
+### **3.2. Configuration Steps**:
 
 1. **Access Azure Portal**:
    - Navigate to the [Azure portal](https://portal.azure.com/).
@@ -294,7 +241,7 @@ Azure Blob Storage is a service for storing large amounts of unstructured data, 
    - Here you will see two keys (key1 and key2). Each key has an associated connection string.
    - Copy the connection string of either key. This string will be used to grant Databricks access to the blob storage.
 
-### **4.3. Relevance to Databricks Integration**:
+### **3.3. Relevance to Databricks Integration**:
 
 - **Data Source/Destination**: Azure Blob Storage will either supply data to Databricks for analysis or act as a destination for data processed by Databricks.
   
@@ -305,13 +252,13 @@ Azure Blob Storage is a service for storing large amounts of unstructured data, 
 ---
 ---
 
-## **5. Creating and Configuring Secret Scope in Databricks for Blob Storage Integration**:
+## **4. Creating and Configuring Secret Scope in Databricks for Blob Storage Integration**:
 
-### **5.1. Purpose**:
+### **4.1. Purpose**:
 
 Storing sensitive information, like the Azure Blob Storage connection string, in plaintext within your notebooks or scripts is a security risk. To mitigate this, Azure Databricks provides a secrets utility to securely store such sensitive information. This section will guide you on creating a secret scope and saving the connection string within it, ensuring a secure bridge between Databricks and Blob Storage.
 
-### **5.2. Configuration Steps**:
+### **4.2. Configuration Steps**:
 
 1. **Understanding Databricks Secrets**:
    - Secrets in Azure Databricks allow you to store sensitive strings securely, such as database connection strings, and reference them in notebooks.
@@ -336,7 +283,7 @@ Storing sensitive information, like the Azure Blob Storage connection string, in
      - `<secret_name>` with a memorable name for this specific secret (e.g., `blobStorageConnectionString`).
      - `<Copied_Connection_String>` with the connection string you obtained from the Azure portal in Point 3.
 
-### **5.3. Relevance to Blob Storage Integration**:
+### **4.3. Relevance to Blob Storage Integration**:
 
 - **Secure Data Transfer**: By using secrets, you ensure that the connection between Databricks and Blob Storage is encrypted and secure. Unauthorized users won't be able to see or use the connection string.
 
@@ -347,13 +294,13 @@ Storing sensitive information, like the Azure Blob Storage connection string, in
 ---
 ---
 
-## **6. Accessing Azure Blob Storage from a Databricks Notebook Using Secrets**:
+## **5. Accessing Azure Blob Storage from a Databricks Notebook Using Secrets**:
 
-### **6.1. Purpose**:
+### **5.1. Purpose**:
 
 The objective of this section is to help users securely access Azure Blob Storage from a Databricks notebook by utilizing the secrets created in the prior steps. Accessing data securely ensures data integrity, confidentiality, and minimizes risks associated with data breaches.
 
-### **6.2. Detailed Steps**:
+### **5.2. Detailed Steps**:
 
 1. **Initialize a New Databricks Notebook**:
    - Navigate to your Azure Databricks workspace.
@@ -390,7 +337,7 @@ The objective of this section is to help users securely access Azure Blob Storag
 5. **Note on Data Formats**:
    - The example above shows how to read text data. If your Blob Storage contains data in different formats (e.g., parquet, csv, json), make sure to adjust the read method accordingly (e.g., `spark.read.csv()`, `spark.read.parquet()`, etc.).
 
-### **6.3. Advantages of This Approach**:
+### **5.3. Advantages of This Approach**:
 
 - **Security**: By using secrets to store connection strings, you ensure that your data remains confidential. There's no risk of exposing sensitive information in your notebook.
   
@@ -401,13 +348,13 @@ The objective of this section is to help users securely access Azure Blob Storag
 ---
 ---
 
-## **7. Troubleshooting Issues with Accessing Azure Blob Storage from Databricks Using Secrets**:
+## **6. Troubleshooting Issues with Accessing Azure Blob Storage from Databricks Using Secrets**:
 
-### **7.1. Purpose**:
+### **6.1. Purpose**:
 
 The main goal of this section is to offer guidance on potential pitfalls and common issues that users may encounter when integrating Azure Databricks with Azure Blob Storage. By addressing these challenges, users can ensure a seamless and secure data access experience.
 
-### **7.2. Common Issues and Resolutions**:
+### **6.2. Common Issues and Resolutions**:
 
 1. **Secrets Not Found**:
    - **Symptom**: Errors related to accessing secrets, such as "Secret does not exist" or "Scope not found."
@@ -429,7 +376,7 @@ The main goal of this section is to offer guidance on potential pitfalls and com
    - **Symptom**: Errors indicating that a specified path or file does not exist.
    - **Solution**: Double-check the Blob container name and file path specified in the notebook. Ensure that it matches the actual structure in Azure Blob Storage.
 
-### **7.3. Best Practices**:
+### **6.3. Best Practices**:
 
 - **Logs**: Always check the error logs provided by Databricks. They can offer detailed insights into the nature of the problem.
   
